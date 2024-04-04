@@ -28,9 +28,9 @@ def flatten_list(list_of_lists):
 
 
 def translate_lines(translator, lines, source_language, target_language):
-    source_text = "\n❂".join(lines)
+    source_text = "\n@".join(lines)
     translation = translator.translate(source_text, src=source_language, dest=target_language)
-    translated_lines = translation.text.split("\n❂")
+    translated_lines = translation.text.split("\n@")
     return translated_lines
 
 
@@ -92,7 +92,7 @@ def pre_process_srt_file(input_file):
     # Load SRT file
     srt_file = pysrt.open(input_file, encoding='utf-8')
     for sub in srt_file:
-        sub.text = str(sub.text).replace("\n", " ").replace("<i>", "").replace("</i>", "")
+        sub.text = str(sub.text).replace("\n", " ").replace("<i>", "").replace("</i>", "").replace("{\\an8}", "")
     srt_file.save(input_file, encoding='utf-8')
 
 
@@ -106,7 +106,7 @@ def main():
         return
     
     if str(input_file).lower().endswith(".mkv"):
-        video_file = input_file.lower()
+        video_file = input_file
         input_file = video_file.replace(".mkv", ".srt")
         extract_subtitles(video_file, input_file)
     
