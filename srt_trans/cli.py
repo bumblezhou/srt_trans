@@ -27,6 +27,10 @@ def flatten_list(list_of_lists):
     return [item for sublist in list_of_lists for item in sublist]
 
 
+def multi_find(source_text, search_key):
+    return [pos for pos in range(len(source_text)) if source_text.startswith(search_key, pos)]
+
+
 def translate_lines(translator, lines, source_language, target_language):
     lines = [line + '\n' for line in lines]
     source_text = "@@@".join(lines)
@@ -57,9 +61,14 @@ def translate_srt(input_file, output_file, source_language, target_language):
         if len(translated_lines) == len(sub_lines):
             translated_lines_list.append(translated_lines)
         else:
-            print("Can not translate the subtitle correctly.")
-            result = False
-            break
+            translated_lines = [[sub_line + "\n" for sub_line in (line[:-1].split("\n"))] if len(multi_find(line, "\n")) > 1 else [line] for line in translated_lines]
+            translated_lines = flatten_list(translated_lines)
+            if len(translated_lines) == len(sub_lines):
+                translated_lines_list.append(translated_lines)
+            else:
+                print("Can not translate the subtitle correctly.")
+                result = False
+                break
     
     if not result:
         return result
