@@ -27,7 +27,16 @@ def flatten_list(list_of_lists):
     return [item for sublist in list_of_lists for item in sublist]
 
 
+def translate_lines(translator, lines, source_language, target_language):
+    source_text = "\n❂".join(lines)
+    translation = translator.translate(source_text, src=source_language, dest=target_language)
+    translated_lines = translation.text.split("\n❂")
+    return translated_lines
+
+
 def translate_srt(input_file, output_file, source_language, target_language):
+    result = True
+
     # Load SRT file
     srt_file = pysrt.open(input_file, encoding='utf-8')
     
@@ -41,10 +50,16 @@ def translate_srt(input_file, output_file, source_language, target_language):
     translated_lines_list = []
     # Loop each each small list of lines, translate them.
     for sub_lines in sub_lines_list:
-        source_text = "@".join(sub_lines)
-        translation = translator.translate(source_text, src=source_language, dest=target_language)
-        translated_lines = translation.text.split("@")
-        translated_lines_list.append(translated_lines)
+        translated_lines = translate_lines(translator, sub_lines, source_language, target_language)
+        if len(translated_lines) == len(sub_lines):
+            translated_lines_list.append(translated_lines)
+        else:
+            print("Can not translate the subtitle correctly.")
+            result = False
+            break
+    
+    if not result:
+        return result
 
     translated_lines = flatten_list(translated_lines_list)
     # Translate each subtitle
@@ -54,6 +69,8 @@ def translate_srt(input_file, output_file, source_language, target_language):
 
     # Save translated SRT file
     srt_file.save(output_file, encoding='utf-8')
+
+    return result
 
 
 def print_usage():
@@ -75,7 +92,7 @@ def pre_process_srt_file(input_file):
     # Load SRT file
     srt_file = pysrt.open(input_file, encoding='utf-8')
     for sub in srt_file:
-        sub.text = str(sub.text).replace("\n", " ")
+        sub.text = str(sub.text).replace("\n", " ").replace("<i>", "").replace("</i>", "")
     srt_file.save(input_file, encoding='utf-8')
 
 
@@ -111,7 +128,9 @@ def main():
         os.environ['https_proxy'] = proxy
 
     output_file = str(input_file).replace(".srt", f".{target_language}.srt")
-    translate_srt(input_file, output_file, source_language, target_language)
+    translate_result = translate_srt(input_file, output_file, source_language, target_language)
+    if not translate_result:
+        return
     
     os.remove(input_file)
     shutil.move(output_file, input_file)
