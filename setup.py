@@ -1,12 +1,12 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='srt_file_translator',
+    name='srt_trans',
     version='0.1.0',
     packages=find_packages(),
     entry_points={
         'console_scripts': [
-            "srt_file_translator = srt_file_translator.cli:main"
+            "srt_trans = srt_trans.cli:main"
         ],
     },
     install_requires=[
@@ -19,7 +19,7 @@ setup(
     description='A simple translator for any SubRip(.srt) file.',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
-    url='https://github.com/bumblezhou/srt_file_translator',
+    url='https://github.com/bumblezhou/srt_translator',
     license='MIT',
     classifiers=[
         'License :: OSI Approved :: MIT License',
