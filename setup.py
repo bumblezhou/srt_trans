@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='srt_trans',
-    version='1.0.8',
+    version='1.0.9',
     packages=find_packages(),
     entry_points={
         'console_scripts': [

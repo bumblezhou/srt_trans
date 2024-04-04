@@ -127,8 +127,7 @@ def main():
         track_number = 1
         video_file = ""
         if len(sys.argv) == 2:
-            video_file = input_file
-            input_file = video_file.replace(".mkv", ".srt")
+            pass
         elif len(sys.argv) == 4 and sys.argv[2] == "-track_number":
             track_number = sys.argv[3]
         elif len(sys.argv) == 6 and sys.argv[2] == "-src_lang" and sys.argv[4] == "-dest_lang":
@@ -159,6 +158,9 @@ def main():
         if not str(track_number).isdigit():
             print("Invalid track_number, it should be an int!")
             return
+
+        video_file = input_file
+        input_file = video_file.replace(".mkv", ".srt")
         extract_subtitles(video_file, input_file, int(track_number))
     else:
         if len(sys.argv) == 2:
