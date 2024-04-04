@@ -28,9 +28,12 @@ def flatten_list(list_of_lists):
 
 
 def translate_lines(translator, lines, source_language, target_language):
-    source_text = "\n@".join(lines)
+    lines = [line + '\n' for line in lines]
+    source_text = "@@@".join(lines)
     translation = translator.translate(source_text, src=source_language, dest=target_language)
-    translated_lines = translation.text.split("\n@")
+    translated_lines = translation.text.split("@@@")
+    translated_lines = [line.replace("@ @@", "@@@").replace("@@ @", "@@@").split("@@@") for line in translated_lines]
+    translated_lines = flatten_list(translated_lines)
     return translated_lines
 
 
@@ -92,7 +95,7 @@ def pre_process_srt_file(input_file):
     # Load SRT file
     srt_file = pysrt.open(input_file, encoding='utf-8')
     for sub in srt_file:
-        sub.text = str(sub.text).replace("\n", " ").replace("<i>", "").replace("</i>", "").replace("{\\an8}", "")
+        sub.text = str(sub.text).replace("\n", " ").replace("<i>", "").replace("</i>", "").replace("{\\an8}", "").replace("\"", "")
     srt_file.save(input_file, encoding='utf-8')
 
 
