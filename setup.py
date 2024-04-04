@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='srt_trans',
-    version='0.1.0',
+    version='0.1.1',
     packages=find_packages(),
     entry_points={
         'console_scripts': [
@@ -16,10 +16,10 @@ setup(
     ],
     author='Jack',
     author_email='bumble.zhou@gmail.com',
-    description='A simple translator for any SubRip(.srt) file.',
+    description='A simple translator for any SubRip(.srt) files.',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
-    url='https://github.com/bumblezhou/srt_translator',
+    url='https://github.com/bumblezhou/srt_trans',
     license='MIT',
     classifiers=[
         'License :: OSI Approved :: MIT License',
