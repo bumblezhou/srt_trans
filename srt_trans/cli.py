@@ -124,10 +124,12 @@ def main():
     target_language = "zh-CN"   # Target language code (e.g., "zh-CN" for Simple Chinese)
     
     if str(input_file).lower().endswith(".mkv"):
-        video_file = input_file
-        input_file = video_file.replace(".mkv", ".srt")
         track_number = 1
-        if len(sys.argv) == 6 and sys.argv[2] == "-src_lang" and sys.argv[4] == "-dest_lang":
+        video_file = ""
+        if len(sys.argv) == 2:
+            video_file = input_file
+            input_file = video_file.replace(".mkv", ".srt")
+        elif len(sys.argv) == 6 and sys.argv[2] == "-src_lang" and sys.argv[4] == "-dest_lang":
             source_language = sys.argv[3]
             target_language = sys.argv[5]
         elif len(sys.argv) == 8 and sys.argv[2] == "-src_lang" and sys.argv[4] == "-dest_lang" and sys.argv[6] == "-proxy":
@@ -152,9 +154,10 @@ def main():
             print("Invalid track_number, it should be an int!")
             return
         extract_subtitles(video_file, input_file, int(track_number))
-
     else:
-        if len(sys.argv) == 6 and sys.argv[2] == "-src_lang" and sys.argv[4] == "-dest_lang":
+        if len(sys.argv) == 2:
+            pass
+        elif len(sys.argv) == 6 and sys.argv[2] == "-src_lang" and sys.argv[4] == "-dest_lang":
             source_language = sys.argv[3]
             target_language = sys.argv[5]
         elif len(sys.argv) == 8 and sys.argv[2] == "-src_lang" and sys.argv[4] == "-dest_lang" and sys.argv[6] == "-proxy":
