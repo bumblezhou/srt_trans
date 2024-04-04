@@ -129,9 +129,15 @@ def main():
         if len(sys.argv) == 2:
             video_file = input_file
             input_file = video_file.replace(".mkv", ".srt")
+        elif len(sys.argv) == 4 and sys.argv[2] == "-track_number":
+            track_number = sys.argv[3]
         elif len(sys.argv) == 6 and sys.argv[2] == "-src_lang" and sys.argv[4] == "-dest_lang":
             source_language = sys.argv[3]
             target_language = sys.argv[5]
+        elif len(sys.argv) == 8 and sys.argv[2] == "-src_lang" and sys.argv[4] == "-dest_lang" and sys.argv[6] == "-track_number":
+            source_language = sys.argv[3]
+            target_language = sys.argv[5]
+            track_number = sys.argv[7]
         elif len(sys.argv) == 8 and sys.argv[2] == "-src_lang" and sys.argv[4] == "-dest_lang" and sys.argv[6] == "-proxy":
             source_language = sys.argv[3]
             target_language = sys.argv[5]
