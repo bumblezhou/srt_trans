@@ -3,6 +3,20 @@ import pysrt
 import os
 import sys
 import shutil
+import ffmpeg
+
+def extract_subtitles(video_file, output_srt):
+    # Extract subtitles using FFmpeg
+    try:
+        (
+            ffmpeg
+            .input(video_file)
+            .output(output_srt, f='srt')
+            .run()
+        )
+        print(f'Subtitles extracted from {video_file} and saved to {output_srt}')
+    except ffmpeg.Error as e:
+        print(f'Error: {e}')
 
 
 def split_list(input_list, chunk_size):
@@ -44,13 +58,16 @@ def translate_srt(input_file, output_file, source_language, target_language):
 
 def print_usage():
     print("""
-        Usage: srt_file_translator test_file.srt [-src_lang en -dest_lang zh-CN -proxy http://youdomain:your_port]
+        Usage: srt_trans test_file.srt [-src_lang en -dest_lang zh-CN -proxy http://youdomain:your_port]
         Example:
-            srt_file_translator test_file.srt
-            srt_file_translator test_file.srt -src_lang en -dest_lang zh-TW
-            srt_file_translator test_file.srt -src_lang en -dest_lang ja
-            srt_file_translator test_file.srt -src_lang en -dest_lang zh-CN
-            srt_file_translator test_file.srt -src_lang en -dest_lang fr -proxy http://127.0.0.1:8118
+            srt_trans ./test_video.mkv
+            srt_trans ./test_video.mkv -src_lang en -dest_lang zh-TW
+            srt_trans ./test_video.mkv -src_lang en -dest_lang zh-CN -proxy http://127.0.0.1:8118
+            srt_trans test_file.srt
+            srt_trans test_file.srt -src_lang en -dest_lang zh-TW
+            srt_trans test_file.srt -src_lang en -dest_lang ja
+            srt_trans test_file.srt -src_lang en -dest_lang zh-CN
+            srt_trans test_file.srt -src_lang en -dest_lang fr -proxy http://127.0.0.1:8118
     """)
 
 
@@ -70,6 +87,11 @@ def main():
     if not os.path.exists(input_file):
         print(f"{input_file} not exists!")
         return
+    
+    if str(input_file).lower().endswith(".mkv"):
+        video_file = input_file.lower()
+        input_file = video_file.replace(".mkv", ".srt")
+        extract_subtitles(video_file, input_file)
     
     pre_process_srt_file(input_file)
 
