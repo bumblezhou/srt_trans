@@ -4,13 +4,13 @@
 # How to usage:
 
 ```bash
-Usage: python ./app.py test_file.srt [-src_lang en -dest_lang zh-CN -proxy http://youdomain:your_port]
+Usage: srt_file_translator test_file.srt [-src_lang en -dest_lang zh-CN -proxy http://youdomain:your_port]
 Example:
-    python ./app.py ./test/test_file.srt
-    python ./app.py ./test/test_file.srt -src_lang en -dest_lang zh-TW
-    python ./app.py ./test/test_file.srt -src_lang en -dest_lang ja
-    python ./app.py ./test/test_file.srt -src_lang en -dest_lang zh-CN
-    python ./app.py ./test/test_file.srt -src_lang en -dest_lang fr -proxy http://127.0.0.1:8118
+    srt_file_translator ./test/test_file.srt
+    srt_file_translator ./test/test_file.srt -src_lang en -dest_lang zh-TW
+    srt_file_translator ./test/test_file.srt -src_lang en -dest_lang ja
+    srt_file_translator ./test/test_file.srt -src_lang en -dest_lang zh-CN
+    srt_file_translator ./test/test_file.srt -src_lang en -dest_lang fr -proxy http://127.0.0.1:8118
 ```
 
 # Installation
