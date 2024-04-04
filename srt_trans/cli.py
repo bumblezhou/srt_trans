@@ -5,13 +5,13 @@ import sys
 import shutil
 import ffmpeg
 
-def extract_subtitles(video_file, output_srt):
+def extract_subtitles(video_file, output_srt, track_number = 1):
     # Extract subtitles using FFmpeg
     try:
         (
             ffmpeg
             .input(video_file)
-            .output(output_srt, f='srt')
+            .output(output_srt, map='s:' + str(track_number - 1))
             .run()
         )
         print(f'Subtitles extracted from {video_file} and saved to {output_srt}')
@@ -92,6 +92,9 @@ def print_usage():
             srt_trans ./test_video.mkv
             srt_trans ./test_video.mkv -src_lang en -dest_lang zh-TW
             srt_trans ./test_video.mkv -src_lang en -dest_lang zh-CN -proxy http://127.0.0.1:8118
+            srt_trans ./test_video.mkv -track_number 2
+            srt_trans ./test_video.mkv -src_lang en -dest_lang zh-TW -track_number 2
+            srt_trans ./test_video.mkv -src_lang en -dest_lang zh-CN -proxy http://127.0.0.1:8118 -track_number 2
             srt_trans test_file.srt
             srt_trans test_file.srt -src_lang en -dest_lang zh-TW
             srt_trans test_file.srt -src_lang en -dest_lang ja
@@ -117,27 +120,55 @@ def main():
         print(f"{input_file} not exists!")
         return
     
+    source_language = "en"      # Source language code (e.g., "en" for English)
+    target_language = "zh-CN"   # Target language code (e.g., "zh-CN" for Simple Chinese)
+    
     if str(input_file).lower().endswith(".mkv"):
         video_file = input_file
         input_file = video_file.replace(".mkv", ".srt")
-        extract_subtitles(video_file, input_file)
+        track_number = 1
+        if len(sys.argv) == 6 and sys.argv[2] == "-src_lang" and sys.argv[4] == "-dest_lang":
+            source_language = sys.argv[3]
+            target_language = sys.argv[5]
+        elif len(sys.argv) == 8 and sys.argv[2] == "-src_lang" and sys.argv[4] == "-dest_lang" and sys.argv[6] == "-proxy":
+            source_language = sys.argv[3]
+            target_language = sys.argv[5]
+            proxy = sys.argv[7]
+            # Set environment variables (For example: "http://127.0.0.1:8118")
+            os.environ['http_proxy'] = proxy
+            os.environ['https_proxy'] = proxy
+        elif len(sys.argv) == 10 and sys.argv[2] == "-src_lang"  and sys.argv[4] == "-dest_lang"and sys.argv[6] == "-proxy" and sys.argv[8] == "-track_number":
+            source_language = sys.argv[3]
+            target_language = sys.argv[5]
+            proxy = sys.argv[7]
+            track_number = sys.argv[9]
+            # Set environment variables (For example: "http://127.0.0.1:8118")
+            os.environ['http_proxy'] = proxy
+            os.environ['https_proxy'] = proxy
+        else:
+            print("Invalid arguments!")
+            return
+        if not str(track_number).isdigit():
+            print("Invalid track_number, it should be an int!")
+            return
+        extract_subtitles(video_file, input_file, int(track_number))
+
+    else:
+        if len(sys.argv) == 6 and sys.argv[2] == "-src_lang" and sys.argv[4] == "-dest_lang":
+            source_language = sys.argv[3]
+            target_language = sys.argv[5]
+        elif len(sys.argv) == 8 and sys.argv[2] == "-src_lang" and sys.argv[4] == "-dest_lang" and sys.argv[6] == "-proxy":
+            source_language = sys.argv[3]
+            target_language = sys.argv[5]
+            proxy = sys.argv[7]
+            # Set environment variables (For example: "http://127.0.0.1:8118")
+            os.environ['http_proxy'] = proxy
+            os.environ['https_proxy'] = proxy
+        else:
+            print("Invalid arguments!")
+            return
     
     pre_process_srt_file(input_file)
-
-    source_language = "en"      # Source language code (e.g., "en" for English)
-    target_language = "zh-CN"   # Target language code (e.g., "zh-CN" for Simple Chinese)
-    if len(sys.argv) == 6 and sys.argv[2] == "-src_lang" and sys.argv[4] == "-dest_lang":
-        source_language = sys.argv[3]
-        target_language = sys.argv[5]
-    if len(sys.argv) == 8 and sys.argv[2] == "-src_lang" and sys.argv[4] == "-dest_lang" and sys.argv[6] == "-proxy":
-        source_language = sys.argv[3]
-        target_language = sys.argv[5]
-        proxy = sys.argv[7]
-        # Set environment variables (replace with your details)
-        # os.environ['http_proxy'] = "http://127.0.0.1:8118"
-        # os.environ['https_proxy'] = "http://127.0.0.1:8118"
-        os.environ['http_proxy'] = proxy
-        os.environ['https_proxy'] = proxy
 
     output_file = str(input_file).replace(".srt", f".{target_language}.srt")
     translate_result = translate_srt(input_file, output_file, source_language, target_language)
