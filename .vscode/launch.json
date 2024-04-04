@@ -11,7 +11,7 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "justMyCode": false,
-            "args": ["./tests/test_file.srt", "-src_lang", "en", "-dest_lang", "ja", "-proxy", "http://127.0.0.1:8118"]
+            "args": ["./tests/test_file_raw.srt", "-src_lang", "en", "-dest_lang", "ja", "-proxy", "http://127.0.0.1:8118"]
         }
     ]
 }

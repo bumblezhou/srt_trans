@@ -15,8 +15,9 @@ def flatten_list(list_of_lists):
 
 def translate_srt(input_file, output_file, source_language, target_language):
     # Load SRT file
-    subs = pysrt.open(input_file, encoding='utf-8')
-    lines = [sub.text for sub in subs]
+    srt_file = pysrt.open(input_file, encoding='utf-8')
+    
+    lines = [sub.text for sub in srt_file]
     # split all lines into small list of lines(no more than 200 lines in each sub list)
     sub_lines_list = split_list(lines, 200)
 
@@ -33,12 +34,12 @@ def translate_srt(input_file, output_file, source_language, target_language):
 
     translated_lines = flatten_list(translated_lines_list)
     # Translate each subtitle
-    for sub, translated_line in zip(subs, translated_lines):
+    for sub, translated_line in zip(srt_file, translated_lines):
         # Merge the source subtitle and the translated subtitle.
         sub.text = "<font color='#ffff54'>" + sub.text + "</font>" + "\n" + translated_line
 
     # Save translated SRT file
-    subs.save(output_file, encoding='utf-8')
+    srt_file.save(output_file, encoding='utf-8')
 
 
 def print_usage():
@@ -53,6 +54,14 @@ def print_usage():
     """)
 
 
+def pre_process_srt_file(input_file):
+    # Load SRT file
+    srt_file = pysrt.open(input_file, encoding='utf-8')
+    for sub in srt_file:
+        sub.text = str(sub.text).replace("\n", " ")
+    srt_file.save(input_file, encoding='utf-8')
+
+
 def main():
     if len(sys.argv) < 2:
         print_usage()
@@ -61,6 +70,9 @@ def main():
     if not os.path.exists(input_file):
         print(f"{input_file} not exists!")
         return
+    
+    pre_process_srt_file(input_file)
+
     source_language = "en"      # Source language code (e.g., "en" for English)
     target_language = "zh-CN"   # Target language code (e.g., "zh-CN" for Simple Chinese)
     if len(sys.argv) == 6 and sys.argv[2] == "-src_lang" and sys.argv[4] == "-dest_lang":
