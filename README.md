@@ -1,5 +1,5 @@
 # srt_trans
-## Translage any SubRip file from any source language to any target language, and merger them into the target SubRip(.srt) file.
+## A tool which can translage any SubRip file from any source language to any target language, and merger them into the target SubRip(.srt) file. It can also extract subtitles from any mkv files, and translate the subtitles into any language you want.
 
 # How to usage:
 
