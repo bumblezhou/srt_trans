@@ -1,7 +1,7 @@
 # srt_trans
 A tool which can translate any SubRip file from any source language to any target language, and merger them into the original SubRip(.srt) file. It can also extract subtitles from any mkv files, and translate the subtitles into any language you want.
 
-# How to usage:
+## How to usage:
 
 ```bash
 Usage: srt_trans test_file.srt [-src_lang en -dest_lang zh-CN -proxy http://youdomain:your_port]
@@ -19,20 +19,20 @@ Example:
     srt_trans test_file.srt -src_lang en -dest_lang fr -proxy http://127.0.0.1:8118
 ```
 
-# Package
+## How to package
 ```bash
 pip install wheel
 python setup.py sdist bdist_wheel
 ```
 
-# Publish to pypi
+## How to publish to pypi
 ```bash
 pip install twine
 twine upload dist/*
 ```
 
-# Installation
-## srt_trans is available on pypi. To intall it you can:
+## Installation
+### srt_trans is available on pypi. To intall it you can:
 ```bash
 sudo pip install srt_trans
 ```
