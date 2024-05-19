@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='srt_trans',
-    version='1.0.9',
+    version='1.0.10',
     packages=find_packages(),
     entry_points={
         'console_scripts': [
@@ -11,7 +11,7 @@ setup(
     },
     install_requires=[
         # List your dependencies here
-        'googletrans==3.1.0a0',
+        'requests>=2.28.2',
         'pysrt>=1.1.2',
         'ffmpeg_python==0.2.0'
     ],

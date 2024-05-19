@@ -1,4 +1,5 @@
-from googletrans import Translator
+# from googletrans import Translator
+import requests
 import pysrt
 import os
 import sys
@@ -31,14 +32,55 @@ def multi_find(source_text, search_key):
     return [pos for pos in range(len(source_text)) if source_text.startswith(search_key, pos)]
 
 
-def translate_lines(translator, lines, source_language, target_language):
-    lines = [line + '\n' for line in lines]
-    source_text = "@@@".join(lines)
-    translation = translator.translate(source_text, src=source_language, dest=target_language)
-    translated_lines = translation.text.split("@@@")
-    translated_lines = [line.replace("@ @@", "@@@").replace("@@ @", "@@@").split("@@@") for line in translated_lines]
-    translated_lines = flatten_list(translated_lines)
+def translate_text(text, source_lang='en', target_lang='zh-CN'):
+    url = 'https://translate.google.com/translate_a/single'
+    params = {
+        'client': 'gtx',
+        'sl': source_lang,
+        'tl': target_lang,
+        'dt': 't',
+        'q': text,
+    }
+
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+    }
+
+    response = requests.get(url, params=params, headers=headers)
+    if response.status_code == 200:
+        result = response.json()
+        extracted_result = [raw_line[0] for raw_line in result[0]]
+        return extracted_result
+    else:
+        return None
+
+
+# def translate_lines(translator, lines, source_language, target_language):
+def translate_lines(lines, source_language, target_language):
+    # lines = [line + '\n' for line in lines]
+    # source_text = "@@@".join(lines)
+    source_text = "\n".join(lines)
+    # translation = translator.translate(source_text, src=source_language, dest=target_language)
+    # translated_lines = translation.text.split("@@@")
+    # translated_lines = translation.split("@@@")
+    # translated_lines = [line.replace("@ @@", "@@@").replace("@@ @", "@@@").split("@@@") for line in translated_lines]
+    translated_lines = translate_text(source_text, source_lang=source_language, target_lang=target_language)
+    # translated_lines = flatten_list(translated_lines)
     return translated_lines
+
+
+def combine_lines(translated_lines):
+    result = []
+    temp_line = ""
+    for raw_line in translated_lines:
+        if str(raw_line).endswith("\n"):
+            result.append(raw_line)
+            temp_line = ""
+        else:
+            temp_line += raw_line
+            continue
+    result.append(translated_lines[-1])
+    return result
 
 
 def translate_srt(input_file, output_file, source_language, target_language):
@@ -52,17 +94,19 @@ def translate_srt(input_file, output_file, source_language, target_language):
     sub_lines_list = split_list(lines, 200)
 
     # Initialize translator
-    translator = Translator()
+    # translator = Translator()
 
     translated_lines_list = []
     # Loop each each small list of lines, translate them.
     for sub_lines in sub_lines_list:
-        translated_lines = translate_lines(translator, sub_lines, source_language, target_language)
+        # translated_lines = translate_lines(translator, sub_lines, source_language, target_language)
+        translated_lines = translate_lines(sub_lines, source_language, target_language)
         if len(translated_lines) == len(sub_lines):
             translated_lines_list.append(translated_lines)
         else:
-            translated_lines = [[sub_line + "\n" for sub_line in (line[:-1].split("\n"))] if len(multi_find(line, "\n")) > 1 else [line] for line in translated_lines]
-            translated_lines = flatten_list(translated_lines)
+            # translated_lines = [[sub_line + "\n" for sub_line in (line[:-1].split("\n"))] if len(multi_find(line, "\n")) > 1 else [line] for line in translated_lines]
+            # translated_lines = flatten_list(translated_lines)
+            translated_lines = combine_lines(translated_lines)
             if len(translated_lines) == len(sub_lines):
                 translated_lines_list.append(translated_lines)
             else:
